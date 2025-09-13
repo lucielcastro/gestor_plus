@@ -5,4 +5,5 @@ export enum ErrorCodes {
 
 	InvalidEmail = 3001,
 	UnknownUser = 3002,
+	InvalidPassword = 3003,
 }
