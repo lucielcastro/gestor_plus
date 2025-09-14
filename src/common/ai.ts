@@ -3,7 +3,7 @@ interface HackClubReply {
 }
 
 export const sendToAI = async (ctx: string) => {
-  const data = {
+  const body = {
     messages: [
       { role: "user", context: ctx },
       { role: "system", context: "passar contexto pra IA" },
@@ -13,14 +13,21 @@ export const sendToAI = async (ctx: string) => {
   let reply: Response;
   try {
     reply = await fetch("https://ai.hackclub.com/chat/completions", {
+      method: "post",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(body),
     });
   } catch (error) {
     console.log(error);
     throw error;
   }
-  if (!reply.ok) throw new Error("Error to make request to AI");
+  if (!reply.ok) {
+    console.log(await reply.body?.json());
+    throw new Error("Error to make request to AI");
+  }
+
+  const data = await reply.json();
+  console.log(data);
 };
