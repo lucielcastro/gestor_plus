@@ -1,13 +1,18 @@
+type Choice = {
+  index: number;
+  message: { role: string; content: string };
+  finish_reason: string;
+};
+
 interface HackClubReply {
-  salve: string;
+  id: string;
+  model: string;
+  choices: Choice[];
 }
 
 export const sendToAI = async (ctx: string) => {
   const body = {
-    messages: [
-      { role: "user", context: ctx },
-      { role: "system", context: "passar contexto pra IA" },
-    ],
+    messages: [{ role: "user", content: ctx }],
   };
 
   let reply: Response;
@@ -23,11 +28,9 @@ export const sendToAI = async (ctx: string) => {
     console.log(error);
     throw error;
   }
-  if (!reply.ok) {
-    console.log(await reply.body?.json());
-    throw new Error("Error to make request to AI");
-  }
+  if (!reply.ok) throw new Error("Error to make request to AI");
 
-  const data = await reply.json();
-  console.log(data);
+  //@ts-expect-error
+  const data: HackClubReply = await reply.json();
+  return data.choices.shift();
 };
